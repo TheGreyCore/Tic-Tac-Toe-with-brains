@@ -83,5 +83,5 @@ class Board:
             if value is not None:
                 return value
 
-        # If there is no winner return None
-        return None
+        # If there is no winner return False
+        return False
