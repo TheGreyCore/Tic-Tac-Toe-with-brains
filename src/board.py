@@ -85,3 +85,11 @@ class Board:
 
         # If there is no winner return False
         return False
+
+    # Return path to the button image file
+    def whose_turn(self):
+        if self.x_turn:
+            return "src/images/Y_field.png"
+        else:
+            return "src/images/X_field.png"
+

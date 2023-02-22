@@ -1,4 +1,11 @@
 from tkinter import Tk, Button, PhotoImage
+from tkinter import messagebox
+from src.board import Board
+from src.brain import Enemy
+
+
+board = Board()
+enemy = Enemy()
 
 # Color scheme
 BACKGROUND = "#658864"
@@ -24,6 +31,7 @@ def create_board_buttons(root):
 
 class GUI:
     def __init__(self):
+        # Window settings
         self.root = Tk()
         self.root.title("Tic Tac Toe!")
         self.root.config(padx=10, pady=10, background=BACKGROUND)
@@ -42,19 +50,38 @@ class GUI:
                 ))
                 self.board_buttons[len(self.board_buttons) - 1].grid(row=row_id, column=column_id)
 
-        #
-        self.board_buttons[0].config(command=lambda: self.press_move_button((0, 0)))
-        self.board_buttons[1].config(command=lambda: self.press_move_button((0, 1)))
-        self.board_buttons[2].config(command=lambda: self.press_move_button((0, 2)))
-        self.board_buttons[3].config(command=lambda: self.press_move_button((1, 0)))
-        self.board_buttons[4].config(command=lambda: self.press_move_button((1, 1)))
-        self.board_buttons[5].config(command=lambda: self.press_move_button((1, 2)))
-        self.board_buttons[6].config(command=lambda: self.press_move_button((2, 0)))
-        self.board_buttons[7].config(command=lambda: self.press_move_button((2, 1)))
-        self.board_buttons[8].config(command=lambda: self.press_move_button((2, 2)))
+        # Add function to all buttons.
+        self.board_buttons[0].config(command=lambda: self.press_move_button(0, (0, 0)))
+        self.board_buttons[1].config(command=lambda: self.press_move_button(1, (0, 1)))
+        self.board_buttons[2].config(command=lambda: self.press_move_button(2, (0, 2)))
+        self.board_buttons[3].config(command=lambda: self.press_move_button(3, (1, 0)))
+        self.board_buttons[4].config(command=lambda: self.press_move_button(4, (1, 1)))
+        self.board_buttons[5].config(command=lambda: self.press_move_button(5, (1, 2)))
+        self.board_buttons[6].config(command=lambda: self.press_move_button(6, (2, 0)))
+        self.board_buttons[7].config(command=lambda: self.press_move_button(7, (2, 1)))
+        self.board_buttons[8].config(command=lambda: self.press_move_button(8, (2, 2)))
 
-        self.root.update()
+        # Loop GUI
         self.root.mainloop()
 
-    def press_move_button(self, button_id):
+    def press_move_button(self, button_id, xy):
+        if not board.is_game_over():
+            # Player turn
+            board.make_move(xy[0], xy[1])
+            button_image = PhotoImage(file=board.whose_turn())
+            self.board_buttons[button_id].configure(image=button_image)
+            self.board_buttons[button_id].image = button_image
+            self.root.update()
 
+            # Enemy turn
+            if not board.is_game_over():
+                move = enemy.make_move(board)
+                board.make_move(*move)
+                button_image = PhotoImage(file=board.whose_turn())
+                self.board_buttons[move[0] * 3 + move[1]].configure(image=button_image)
+                self.board_buttons[move[0] * 3 + move[1]].image = button_image
+                self.root.update()
+
+        # Inform player that game is over
+        if board.is_game_over():
+            messagebox.showinfo("Game over!", "Wohhoo game is over!")
